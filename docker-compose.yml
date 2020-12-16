@@ -1,0 +1,70 @@
+version: '2'
+services:
+    zookeeper1:
+              image: zookeeper:3.5
+              restart: always
+              tty: true
+              container_name: zookeeper1
+              ports:
+                  - "2181:2181"
+              hostname: zookeeper1
+              extra_hosts:
+                  - "zookeeper2:172.20.0.3"
+                  - "zookeeper3:172.20.0.4"
+              #environment:
+                  #ZOO_MY_ID: 0
+                  #ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+              user: zookeeper
+              volumes:
+                  - /usr/local/zookeeper1/conf:/conf
+                  - /usr/local/zookeeper1/data:/data
+              networks:
+                  cluster:
+                    ipv4_address: 172.20.0.2
+
+    zookeeper2:
+              image: zookeeper:3.5
+              restart: always
+              container_name: zookeeper2
+              tty: true
+              ports:
+                  - "2182:2181"
+              hostname: zookeeper2
+              extra_hosts:
+                  - "zookeeper1:172.20.0.2"
+                  - "zookeeper3:172.20.0.4"
+              #environment:
+                  #ZOO_MY_ID: 1
+                  #ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+              user: zookeeper
+              volumes:
+                  - /usr/local/zookeeper2/conf:/conf
+                  - /usr/local/zookeeper2/data:/data
+              networks:
+                  cluster:
+                    ipv4_address: 172.20.0.3
+
+    zookeeper3:
+              image: zookeeper:3.5
+              restart: always
+              container_name: zookeeper3
+              tty: true
+              ports:
+                  - "2183:2181"
+              hostname: zookeeper3
+              extra_hosts:
+                  - "zookeeper1:172.20.0.2"
+                  - "zookeeper2:172.20.0.3"
+              #environment:
+                  #ZOO_MY_ID: 2
+                  #ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+              user: zookeeper
+              volumes:
+                  - /usr/local/zookeeper3/conf:/conf
+                  - /usr/local/zookeeper3/data:/data
+              networks:
+                  cluster:
+                    ipv4_address: 172.20.0.4
+networks:
+  cluster:
+    external: true
